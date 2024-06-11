@@ -1,0 +1,37 @@
+version: '3.1'
+services:
+  zookeeper:
+    container_name: zookeeper-server
+    image: bitnami/zookeeper:3.5.6
+    restart: always
+    ports:
+      - 2181:2181
+    networks:
+      - notification-net
+    environment:
+      ALLOW_ANONYMOUS_LOGIN: "yes"
+  kafka:
+    container_name: kafka-server
+    image: bitnami/kafka:2.4.0
+    restart: always
+    ports:
+      - 9092:9092
+    networks:
+      - notification-net
+    environment:
+      ALLOW_PLAINTEXT_LISTENER: "yes"
+      KAFKA_CFG_ZOOKEEPER_CONNECT: "zookeeper-server:2181"
+    depends_on:
+      - zookeeper
+  app:
+    container_name: notification-server
+    image: notification-server:v1
+    restart: always
+    ports:
+      - 8080:8080
+    networks:
+      - notification-net
+    depends_on:
+      - kafka
+networks:
+  notification-net:

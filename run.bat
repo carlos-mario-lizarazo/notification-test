@@ -1,0 +1,1 @@
+java -jar build/libs/top-zendesk-int-0.0.1-SNAPSHOT.jar
