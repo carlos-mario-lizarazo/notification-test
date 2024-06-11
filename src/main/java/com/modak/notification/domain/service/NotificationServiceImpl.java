@@ -13,7 +13,9 @@ import org.springframework.stereotype.Component;
 import com.modak.notification.application.port.input.NotificationService;
 import com.modak.notification.domain.service.exception.ThresholdExceededException;
 import com.modak.notification.domain.service.exception.UnknownTimeUnitException;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Component
 public class NotificationServiceImpl implements NotificationService {
 
@@ -64,25 +66,25 @@ public class NotificationServiceImpl implements NotificationService {
         long notificationTimestamp = notification.getTimestamp();
 
         double diffWithCurrentTime = getTimeUnitBetween(notificationTypeFirstTimestamp, notificationTimestamp, notification.getType().getTimeUnit());
-        System.out.println("Start " + notificationTypeFirstTimestamp);
-        System.out.println("End " + notificationTimestamp);
-        System.out.println("Current diff " + diffWithCurrentTime);
-        System.out.println("Threshold " + threshold);
+        log.info("Start " + notificationTypeFirstTimestamp);
+        log.info("End " + notificationTimestamp);
+        log.info("Current diff " + diffWithCurrentTime);
+        log.info("Threshold " + threshold);
 
         if (diffWithCurrentTime == -1) {
-            System.out.println("[" + userId + "] Message discarded due to unknown time unit in type " + notification.getType().getTimeUnit());
+            log.info("[" + userId + "] Message discarded due to unknown time unit in type " + notification.getType().getTimeUnit());
             throw new UnknownTimeUnitException("[" + userId + "] Message discarded due to unknown time unit in type " + notification.getType().getTimeUnit());
         }
 
         // Discard message if request count is above the threshold
         if (diffWithCurrentTime < 1 && requestCount > threshold) {
-            System.out.println("[" + userId + "] Message discarded due to threshold limits for type " + notification.getType().getId());
+            log.info("[" + userId + "] Message discarded due to threshold limits for type " + notification.getType().getId());
             throw new ThresholdExceededException("[" + userId + "] Message discarded due to threshold limits for type " + notification.getType().getId());
         }
 
         // If request time difference is greater than one for that time unit, means that a new cycle must be created
         if (diffWithCurrentTime >= 1) {
-            System.out.println("[" + userId + "] New cycle enabled for " + notification.getType().getId());
+            log.info("[" + userId + "] New cycle enabled for " + notification.getType().getId());
 
             notificationTypeTracker.setRequestCount(1);
             notificationTypeTracker.setFirstTimestamp(notificationTimestamp);
