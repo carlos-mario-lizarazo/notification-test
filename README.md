@@ -11,7 +11,7 @@ The project includes a `docker-compose.yml` with all the necessary containers to
 After executing the Docker Compose script, you can publish to the `notification-request` topic, here's an example of a docker run execution to use the Kafka Producer CLI:
 
 ```sh
-docker run -it --network notification-service_notification-net --rm bitnami/kafka:latest kafka-console-producer.sh --bootstrap-server kafka-server:9092 --topic notification-request
+docker run -it --network notification-test_notification-net --rm bitnami/kafka:latest kafka-console-producer.sh --bootstrap-server kafka-server:9092 --topic notification-request
 ```
 
 And an example payload:
